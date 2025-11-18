@@ -123,14 +123,24 @@ class DataManager(object):
     def get_task_size(self, task):
         return self._increment_steps[task]
 
+    # def get_train_transform(self):
+    #     return transforms.Compose([*self._train_trsf, *self._common_trsf])
+    
+    # def get_test_transform(self):
+    #     return transforms.Compose([*self._test_trsf, *self._common_trsf])
+    
+    # def get_strong_transform(self):
+    #     return transforms.Compose([*self._strong_trsf, *self._common_trsf])
+    
     def get_train_transform(self):
-        return transforms.Compose([*self._train_trsf, *self._common_trsf])
-    
+    # 先执行通用变换（缩放），再执行训练变换（裁剪等）
+        return transforms.Compose([*self._common_trsf, *self._train_trsf])
+
     def get_test_transform(self):
-        return transforms.Compose([*self._test_trsf, *self._common_trsf])
-    
+        return transforms.Compose([*self._common_trsf, *self._test_trsf])
+
     def get_strong_transform(self):
-        return transforms.Compose([*self._strong_trsf, *self._common_trsf])
+        return transforms.Compose([*self._common_trsf, *self._strong_trsf])
 
     def get_dataset(self, source, mode, indices=[], appendent=[], ret_data=False, two_view=False):
         """
@@ -160,15 +170,24 @@ class DataManager(object):
             raise ValueError('Unknown data source {}.'.format(source))
 
 
+        # if mode == 'train':
+        #     trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+        # elif mode == 'flip':
+        #     trsf = transforms.Compose([*self._test_trsf, transforms.RandomHorizontalFlip(p=1.), *self._common_trsf])
+        # elif mode == 'test' or mode == 'valid':
+        #     trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+        # else:
+        #     raise ValueError('Unknown mode {}.'.format(mode))
         if mode == 'train':
-            trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+            # 先通用变换（缩放），再训练变换（裁剪）
+            trsf = transforms.Compose([*self._common_trsf, *self._train_trsf])
         elif mode == 'flip':
-            trsf = transforms.Compose([*self._test_trsf, transforms.RandomHorizontalFlip(p=1.), *self._common_trsf])
+            trsf = transforms.Compose([*self._common_trsf, *self._test_trsf, transforms.RandomHorizontalFlip(p=1.)])
         elif mode == 'test' or mode == 'valid':
-            trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+            trsf = transforms.Compose([*self._common_trsf, *self._test_trsf])
         else:
             raise ValueError('Unknown mode {}.'.format(mode))
-
+        
         data, targets = [], []
         for idx in indices:
             class_data, class_targets = self._select(x, y, low_range=idx, high_range=idx+1)
@@ -201,13 +220,19 @@ class DataManager(object):
         else:
             raise ValueError('Unknown data source {}.'.format(source))
 
+        # if mode == 'train':
+        #     trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+        # elif mode == 'test' or mode == 'valid':
+        #     trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+        # else:
+        #     raise ValueError('Unknown mode {}.'.format(mode))
         if mode == 'train':
-            trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+            trsf = transforms.Compose([*self._common_trsf, *self._train_trsf])
         elif mode == 'test' or mode == 'valid':
-            trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+            trsf = transforms.Compose([*self._common_trsf, *self._test_trsf])
         else:
             raise ValueError('Unknown mode {}.'.format(mode))
-
+        
         train_data, train_targets = [], []
         val_data, val_targets = [], []
         for idx in indices:
@@ -256,15 +281,24 @@ class DataManager(object):
         else:
             raise ValueError('Unknown data source {}.'.format(source))
 
+        # if mode == 'train':
+        #     trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+        # elif mode == 'flip':
+        #     trsf = transforms.Compose([*self._test_trsf, transforms.RandomHorizontalFlip(p=1.), *self._common_trsf])
+        # elif mode == 'test' or mode == 'valid':
+        #     trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+        # else:
+        #     raise ValueError('Unknown mode {}.'.format(mode))
+        
         if mode == 'train':
-            trsf = transforms.Compose([*self._train_trsf, *self._common_trsf])
+            trsf = transforms.Compose([*self._common_trsf, *self._train_trsf])
         elif mode == 'flip':
-            trsf = transforms.Compose([*self._test_trsf, transforms.RandomHorizontalFlip(p=1.), *self._common_trsf])
+            trsf = transforms.Compose([*self._common_trsf, *self._test_trsf, transforms.RandomHorizontalFlip(p=1.)])
         elif mode == 'test' or mode == 'valid':
-            trsf = transforms.Compose([*self._test_trsf, *self._common_trsf])
+            trsf = transforms.Compose([*self._common_trsf, *self._test_trsf])
         else:
             raise ValueError('Unknown mode {}.'.format(mode))
-
+        
         data, targets = [], []
         for idx in known_indices:
             class_data, class_targets = self._select(x, y, low_range=idx, high_range=idx+1)

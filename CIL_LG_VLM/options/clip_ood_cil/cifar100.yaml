@@ -1,6 +1,6 @@
 ######### Basic Settings #########
 basic:
-    device: '9'
+    device: '0'
     seed: [100] # icarl 官方代码给的种子是 1993
 
     # Dataset Choises: cifar100_i2t, cifar100_i2t_few_shot
