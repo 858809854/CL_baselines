@@ -90,7 +90,7 @@ class ImagenetR_I2T(iData):
     def download_data(self):
         # data_path = "/home/zhangwentao/Dataset2"
         # data_path = "/home/2021/wentao/Storage/tmp/CLIP_OOD_detection_CIL/data"
-        data_path = "/home/2021/wentao/Datasets"
+        data_path = "data"
         base_dir = os.path.join(data_path,"imagenet_r")
         train_dir = os.path.join(base_dir, "train")
         test_dir = os.path.join(base_dir, "test")

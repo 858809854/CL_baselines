@@ -1,7 +1,7 @@
 ######### Basic Settings #########
 basic:
 
-    device: '0'
+    device: '1'
     seed: [3407] # icarl 官方代码给的种子是 1993          50, 3407, 1
 
 
